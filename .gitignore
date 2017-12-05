@@ -94,4 +94,5 @@
 !/themes/blank.png
 !/themes/blank-big.png
 
-/translations
+/translations/*
+!/translations/.htaccess
