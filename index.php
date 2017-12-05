@@ -17,6 +17,7 @@ use Mautic\Middleware\MiddlewareBuilder;
 use Symfony\Component\ClassLoader\ApcClassLoader;
 
 $loader = require_once __DIR__.'/app/autoload.php';
+require __DIR__.'/app/globalfunc.php';
 
 /*
  * Use APC for autoloading to improve performance. Change 'sf2' to a unique prefix
@@ -26,7 +27,7 @@ $loader = require_once __DIR__.'/app/autoload.php';
 //$loader->unregister();
 //$apcLoader->register(true);
 
-\Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('prod');
+\Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('dev');
 
 $kernel = new AppKernel('prod', false);
 $kernel->loadClassCache();

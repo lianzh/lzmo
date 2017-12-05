@@ -34,6 +34,11 @@ define('MAUTIC_ROOT', (IN_CLI || $standalone || empty($task)) ? __DIR__ : dirnam
 define('MAUTIC_UPGRADE_ERROR_LOG', MAUTIC_ROOT.'/upgrade_errors.txt');
 define('MAUTIC_APP_ROOT', MAUTIC_ROOT.'/app');
 
+if (!IN_CLI) {
+    echo 'only run in cli';
+    exit;
+}
+
 if ($standalone || IN_CLI) {
     if (!file_exists(__DIR__.'/upgrade')) {
         mkdir(__DIR__.'/upgrade');
