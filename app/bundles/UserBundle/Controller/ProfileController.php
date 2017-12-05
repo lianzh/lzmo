@@ -164,13 +164,13 @@ class ProfileController extends FormController
 
                     //check if the user's locale has been downloaded already, fetch it if not
                     $installedLanguages = $this->get('mautic.helper.core_parameters')->getParameter('supported_languages');
-
+                    
                     if ($me->getLocale() && !array_key_exists($me->getLocale(), $installedLanguages)) {
                         /** @var \Mautic\CoreBundle\Helper\LanguageHelper $languageHelper */
                         $languageHelper = $this->get('mautic.helper.language');
 
                         $fetchLanguage = $languageHelper->extractLanguagePackage($me->getLocale());
-
+                        
                         // If there is an error, we need to reset the user's locale to the default
                         if ($fetchLanguage['error']) {
                             $me->setLocale(null);

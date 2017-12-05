@@ -43,6 +43,7 @@ class LanguageHelper
 
         // Moved to outside environment folder so that it doesn't get wiped on each config update
         $this->cacheFile = $this->factory->getSystemPath('cache').'/../languageList.txt';
+        
         $this->connector = HttpFactory::getHttp();
     }
 
@@ -110,7 +111,8 @@ class LanguageHelper
         $zipper->close();
 
         // We can remove the package now
-        @unlink($packagePath);
+        // 不进行删除
+        // @unlink($packagePath);
 
         return [
             'error'   => false,
@@ -143,10 +145,13 @@ class LanguageHelper
         if (!$overrideCache && is_readable($this->cacheFile)) {
             $cacheData = json_decode(file_get_contents($this->cacheFile), true);
 
+            return $cacheData['languages'];
+
+            // 不检查过期时间
             // If we're within the cache time, return the cached data
-            if ($cacheData['checkedTime'] > strtotime('-12 hours')) {
-                return $cacheData['languages'];
-            }
+            // if ($cacheData['checkedTime'] > strtotime('-12 hours')) {
+            //     return $cacheData['languages'];
+            // }
         }
 
         // Get the language data
@@ -164,7 +169,7 @@ class LanguageHelper
                 'message' => 'mautic.core.language.helper.error.fetching.languages',
             ];
         }
-
+        
         if ($data->code != 200) {
             // Log the error
             $logger = $this->factory->getLogger();
@@ -221,6 +226,18 @@ class LanguageHelper
             ];
         }
 
+        // 如果文件存在,则使用已经存在的文件
+        // Set the filesystem target
+        $target = $this->factory->getSystemPath('cache').'/'.$languageCode.'.zip';
+
+        if (file_exists($target)) {
+            return [
+                'error' => false,
+            ];
+        }
+
+        // dump($target,$languageCode);exit;
+
         $langUrl = 'https://updates.mautic.org/index.php?option=com_mauticdownload&task=downloadLanguagePackage&langCode='.$languageCode;
 
         // GET the update data
@@ -257,8 +274,8 @@ class LanguageHelper
             ];
         }
 
-        // Set the filesystem target
-        $target = $this->factory->getSystemPath('cache').'/'.$languageCode.'.zip';
+        // // Set the filesystem target
+        // $target = $this->factory->getSystemPath('cache').'/'.$languageCode.'.zip';
 
         // Write the response to the filesystem
         file_put_contents($target, $data->body);

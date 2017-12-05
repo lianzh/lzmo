@@ -12,7 +12,7 @@ function classLoader()
 	return $loader;
 }
 
-// 加入 wiwide 通用类库定义
-//classLoader()->addPsr4('WiwideCommon\\', __DIR__ . '/../app/commons');
+// 加入 自定义类库定义
+classLoader()->addPsr4('LianzhCommon\\', __DIR__ . '/../app/commons');
 
 

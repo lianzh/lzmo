@@ -17,6 +17,8 @@
 !/app/bundles/CoreBundle/Assets/css/libraries/froala/plugins/gated_video.css
 !/app/bundles/CoreBundle/Assets/css/*.css
 
+/bak/*
+
 /app/cache/*
 !/app/cache/.gitkeep
 

@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Config\EnvParametersResource;
 use Symfony\Component\HttpKernel\DependencyInjection;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use LianzhCommon\Helper\QuickAccess;
 
 /**
  * Mautic Application Kernel.
@@ -279,6 +280,9 @@ class AppKernel extends Kernel
         }
 
         $this->pluginBundles = $registeredPluginBundles;
+
+        // 将容器对象注入进 QuickAccess 中
+        QuickAccess::setContainer($this->container);
 
         $this->booted = true;
     }

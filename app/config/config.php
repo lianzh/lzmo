@@ -145,6 +145,78 @@ unset($setBundles, $setPluginBundles);
 
 // Set IP lookup services
 $container->setParameter('mautic.ip_lookup_services', $ipLookupServices);
+// \LianzhCommon\Helper\Dumper::dump($ipLookupServices);
+
+// Array
+// (
+//     [freegeoip] => Array
+//         (
+//             [display_name] => Freegeoip.net
+//             [class] => Mautic\CoreBundle\IpLookup\FreegeoipLookup
+//         )
+
+//     [geobytes] => Array
+//         (
+//             [display_name] => Geobytes
+//             [class] => Mautic\CoreBundle\IpLookup\GeobytesLookup
+//         )
+
+//     [geoips] => Array
+//         (
+//             [display_name] => GeoIPs
+//             [class] => Mautic\CoreBundle\IpLookup\GeoipsLookup
+//         )
+
+//     [ipinfodb] => Array
+//         (
+//             [display_name] => IPInfoDB
+//             [class] => Mautic\CoreBundle\IpLookup\IpinfodbLookup
+//         )
+
+//     [maxmind_country] => Array
+//         (
+//             [display_name] => MaxMind - Country Geolocation
+//             [class] => Mautic\CoreBundle\IpLookup\MaxmindCountryLookup
+//         )
+
+//     [maxmind_omni] => Array
+//         (
+//             [display_name] => MaxMind - Insights (formerly Omni]
+//             [class] => Mautic\CoreBundle\IpLookup\MaxmindOmniLookup
+//         )
+
+//     [maxmind_precision] => Array
+//         (
+//             [display_name] => MaxMind - GeoIP2 Precision
+//             [class] => Mautic\CoreBundle\IpLookup\MaxmindPrecisionLookup
+//         )
+
+//     [maxmind_download] => Array
+//         (
+//             [display_name] => MaxMind - GeoLite2 City Download
+//             [class] => Mautic\CoreBundle\IpLookup\MaxmindDownloadLookup
+//         )
+
+//     [telize] => Array
+//         (
+//             [display_name] => Telize
+//             [class] => Mautic\CoreBundle\IpLookup\TelizeLookup
+//         )
+
+//     [ip2loctionlocal] => Array
+//         (
+//             [display_name] => IP2Location Local Bin File
+//             [class] => Mautic\CoreBundle\IpLookup\IP2LocationBinLookup
+//         )
+
+//     [ip2loctionapi] => Array
+//         (
+//             [display_name] => IP2Location Web Service
+//             [class] => Mautic\CoreBundle\IpLookup\IP2LocationAPILookup
+//         )
+
+// )
+
 
 // Load parameters
 include __DIR__.'/parameters.php';

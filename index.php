@@ -27,7 +27,7 @@ require __DIR__.'/app/globalfunc.php';
 //$loader->unregister();
 //$apcLoader->register(true);
 
-\Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('dev');
+\Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('prod');
 
 $kernel = new AppKernel('prod', false);
 $kernel->loadClassCache();

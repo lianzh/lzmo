@@ -13,6 +13,7 @@ date_default_timezone_set('UTC');
 use Mautic\Middleware\MiddlewareBuilder;
 
 $loader = require_once __DIR__.'/vendor/autoload.php';
+require __DIR__.'/app/globalfunc.php';
 
 /*
  * If you don't want to setup permissions the proper way, just uncomment the following PHP line
