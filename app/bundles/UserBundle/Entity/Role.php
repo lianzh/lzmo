@@ -84,7 +84,7 @@ class Role extends FormEntity
             ->columnName('is_admin')
             ->build();
 
-        $builder->createOneToMany('permissions', 'Permission')
+        $builder->createOneToMany('permissions', 'Mautic\UserBundle\Entity\Permission')
             ->orphanRemoval()
             ->mappedBy('role')
             ->cascadePersist()
@@ -96,7 +96,7 @@ class Role extends FormEntity
             ->columnName('readable_permissions')
             ->build();
 
-        $builder->createOneToMany('users', 'User')
+        $builder->createOneToMany('users', 'Mautic\UserBundle\Entity\User')
             ->mappedBy('role')
             ->fetchExtraLazy()
             ->build();

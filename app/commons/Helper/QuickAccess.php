@@ -199,6 +199,8 @@ abstract class QuickAccess
         $metadata = new ORM\ClassMetadata($entityClass);
         $entityClass::loadMetadata($metadata);
 
+        $metadata->setTableName(MAUTIC_TABLE_PREFIX . $metadata->getTableName());
+
         $schemaTool    = new SchemaTool($em);
         $schemas = $schemaTool->getSchemaFromMetadata([$metadata]);
 

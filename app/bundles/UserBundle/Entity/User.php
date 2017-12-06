@@ -194,7 +194,7 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
             ->nullable()
             ->build();
 
-        $builder->createManyToOne('role', 'Role')
+        $builder->createManyToOne('role', 'Mautic\UserBundle\Entity\Role')
             ->inversedBy('users')
             ->cascadeMerge()
             ->addJoinColumn('role_id', 'id', false)

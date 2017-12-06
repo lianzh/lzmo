@@ -65,7 +65,7 @@ class Permission
             ->length(50)
             ->build();
 
-        $builder->createManyToOne('role', 'Role')
+        $builder->createManyToOne('role', 'Mautic\UserBundle\Entity\Role')
             ->inversedBy('permissions')
             ->addJoinColumn('role_id', 'id', false, false, 'CASCADE')
             ->build();
