@@ -406,10 +406,8 @@ class CommonController extends Controller implements MauticController
         //render flashes
         $passthrough['flashes'] = $this->getFlashContent();
 
-        if (!defined('MAUTIC_INSTALLER')) {
-            // Prevent error in case installer is loaded via index_dev.php
-            $passthrough['notifications'] = $this->getNotificationContent();
-        }
+        // Prevent error in case installer is loaded via index_dev.php
+        $passthrough['notifications'] = $this->getNotificationContent();
 
         //render browser notifications
         $passthrough['browserNotifications'] = $this->get('session')->get('mautic.browser.notifications', []);
@@ -679,7 +677,7 @@ class CommonController extends Controller implements MauticController
 
         $this->get('session')->getFlashBag()->add($type, $translatedMessage);
 
-        if (!defined('MAUTIC_INSTALLER') && $addNotification) {
+        if ($addNotification) {
             switch ($type) {
                 case 'warning':
                     $iconClass = 'text-warning fa-exclamation-triangle';

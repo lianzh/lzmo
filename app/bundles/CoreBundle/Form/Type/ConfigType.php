@@ -550,26 +550,6 @@ class ConfigType extends AbstractType
         );
 
         $builder->add(
-            'update_stability',
-            'choice',
-            [
-                'choices' => [
-                    'alpha'  => 'mautic.core.config.update_stability.alpha',
-                    'beta'   => 'mautic.core.config.update_stability.beta',
-                    'rc'     => 'mautic.core.config.update_stability.rc',
-                    'stable' => 'mautic.core.config.update_stability.stable',
-                ],
-                'label'    => 'mautic.core.config.form.update.stability',
-                'required' => false,
-                'attr'     => [
-                    'class'   => 'form-control',
-                    'tooltip' => 'mautic.core.config.form.update.stability.tooltip',
-                ],
-                'empty_value' => false,
-            ]
-        );
-
-        $builder->add(
             'link_shortener_url',
             'text',
             [

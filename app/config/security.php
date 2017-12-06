@@ -233,10 +233,3 @@ if ($container->getParameter('kernel.environment') == 'prod') {
 
 $container->setParameter('mautic.security.restrictedConfigFields', $restrictedConfigFields);
 $container->setParameter('mautic.security.restrictedConfigFields.displayMode', \Mautic\ConfigBundle\Form\Helper\RestrictionHelper::MODE_REMOVE);
-
-/*
- * Optional security parameters
- * mautic.security.disableUpdates = disables remote checks for updates
- * mautic.security.restrictedConfigFields.displayMode = accepts either remove or mask; mask will disable the input with a "Set by system" message
- */
-$container->setParameter('mautic.security.disableUpdates', false);

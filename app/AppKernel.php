@@ -83,27 +83,8 @@ class AppKernel extends Kernel
      */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
-        if (strpos($request->getRequestUri(), 'installer') !== false || !$this->isInstalled()) {
-            define('MAUTIC_INSTALLER', 1);
-        }
-
-        if (defined('MAUTIC_INSTALLER')) {
-            $uri = $request->getRequestUri();
-            if (strpos($uri, 'installer') === false) {
-                $base = $request->getBaseUrl();
-                //check to see if the .htaccess file exists or if not running under apache
-                if ((strpos(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache') === false
-                    || !file_exists(__DIR__.'../.htaccess')
-                    && strpos(
-                        $base,
-                        'index'
-                    ) === false)
-                ) {
-                    $base .= '/index.php';
-                }
-
-                return new RedirectResponse($base.'/installer');
-            }
+        if (strpos($request->getRequestUri(), 'installer') !== false) {
+            die('deny.');
         }
 
         if (false === $this->booted) {
@@ -111,23 +92,21 @@ class AppKernel extends Kernel
         }
 
         // Check for an an active db connection and die with error if unable to connect
-        if (!defined('MAUTIC_INSTALLER')) {
-            $db = $this->getContainer()->get('database_connection');
-            try {
-                $db->connect();
-            } catch (\Exception $e) {
-                error_log($e);
-                throw new \Mautic\CoreBundle\Exception\DatabaseConnectionException(
-                    $this->getContainer()->get('translator')->trans(
-                        'mautic.core.db.connection.error',
-                        [
-                            '%code%' => $e->getCode(),
-                        ]
-                    ),
-                    0,
-                    $e
-                );
-            }
+        $db = $this->getContainer()->get('database_connection');
+        try {
+            $db->connect();
+        } catch (\Exception $e) {
+            error_log($e);
+            throw new \Mautic\CoreBundle\Exception\DatabaseConnectionException(
+                $this->getContainer()->get('translator')->trans(
+                    'mautic.core.db.connection.error',
+                    [
+                        '%code%' => $e->getCode(),
+                    ]
+                ),
+                0,
+                $e
+            );
         }
 
         return parent::handle($request, $type, $catch);
@@ -169,7 +148,6 @@ class AppKernel extends Kernel
             new Mautic\DynamicContentBundle\MauticDynamicContentBundle(),
             new Mautic\EmailBundle\MauticEmailBundle(),
             new Mautic\FormBundle\MauticFormBundle(),
-            new Mautic\InstallBundle\MauticInstallBundle(),
             new Mautic\LeadBundle\MauticLeadBundle(),
             new Mautic\NotificationBundle\MauticNotificationBundle(),
             new Mautic\PageBundle\MauticPageBundle(),
@@ -322,14 +300,7 @@ class AppKernel extends Kernel
      */
     protected function isInstalled()
     {
-        static $isInstalled = null;
-
-        if ($isInstalled === null) {
-            $params      = $this->getLocalParams();
-            $isInstalled = (is_array($params) && !empty($params['db_driver']) && !empty($params['mailer_from_name']));
-        }
-
-        return $isInstalled;
+        return true;
     }
 
     /**

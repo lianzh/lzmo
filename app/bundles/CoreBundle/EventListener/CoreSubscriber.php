@@ -21,7 +21,6 @@ use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\CoreBundle\Menu\MenuHelper;
 use Mautic\CoreBundle\Templating\Helper\AssetsHelper;
-use Mautic\InstallBundle\Controller\InstallController;
 use Mautic\UserBundle\Entity\User;
 use Mautic\UserBundle\Event\LoginEvent;
 use Mautic\UserBundle\Model\UserModel;
@@ -116,7 +115,7 @@ class CoreSubscriber extends CommonSubscriber
      */
     public function onKernelRequestAddGlobalJS(FilterControllerEvent $event)
     {
-        if (defined('MAUTIC_INSTALLER') || $this->userHelper->getUser()->isGuest() || !$event->isMasterRequest()) {
+        if ($this->userHelper->getUser()->isGuest() || !$event->isMasterRequest()) {
             return;
         }
 
@@ -134,10 +133,7 @@ class CoreSubscriber extends CommonSubscriber
      */
     public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)
     {
-        if (defined('MAUTIC_INSTALLER')) {
-            return;
-        }
-
+        
         $session = $event->getRequest()->getSession();
 
         if ($this->securityContext->isGranted('IS_AUTHENTICATED_FULLY') || $this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
@@ -223,7 +219,7 @@ class CoreSubscriber extends CommonSubscriber
             $controller[0]->initialize($event);
 
             //update the user's activity marker
-            if (!($controller[0] instanceof InstallController) && !defined('MAUTIC_ACTIVITY_CHECKED') && !defined('MAUTIC_INSTALLER')) {
+            if (!defined('MAUTIC_ACTIVITY_CHECKED')) {
                 //prevent multiple updates
                 $user = $this->userHelper->getUser();
                 //slight delay to prevent too many updates

@@ -16,14 +16,6 @@ return [
                 'path'       => '/ajax',
                 'controller' => 'MauticCoreBundle:Ajax:delegateAjax',
             ],
-            'mautic_core_update' => [
-                'path'       => '/update',
-                'controller' => 'MauticCoreBundle:Update:index',
-            ],
-            'mautic_core_update_schema' => [
-                'path'       => '/update/schema',
-                'controller' => 'MauticCoreBundle:Update:schema',
-            ],
             'mautic_core_form_action' => [
                 'path'       => '/action/{objectAction}/{objectModel}/{objectId}',
                 'controller' => 'MauticCoreBundle:Form:execute',
@@ -696,10 +688,6 @@ return [
                     '%kernel.cache_dir%',
                 ],
             ],
-            'mautic.helper.update' => [
-                'class'     => 'Mautic\CoreBundle\Helper\UpdateHelper',
-                'arguments' => 'mautic.factory',
-            ],
             'mautic.helper.cache' => [
                 'class'     => 'Mautic\CoreBundle\Helper\CacheHelper',
                 'arguments' => [
@@ -870,15 +858,9 @@ return [
                 'class'     => 'Mautic\CoreBundle\Model\NotificationModel',
                 'arguments' => [
                     'mautic.helper.paths',
-                    'mautic.helper.update',
                     'debril.reader',
                     'mautic.helper.core_parameters',
-                ],
-                'methodCalls' => [
-                    'setDisableUpdates' => [
-                        '%mautic.security.disableUpdates%',
-                    ],
-                ],
+                ]
             ],
             'mautic.core.model.form' => [
                 'class' => 'Mautic\CoreBundle\Model\FormModel',
@@ -986,7 +968,6 @@ return [
         'ip_lookup_config'     => [],
         'transifex_username'   => '',
         'transifex_password'   => '',
-        'update_stability'     => 'stable',
         'cookie_path'          => '/',
         'cookie_domain'        => '',
         'cookie_secure'        => null,
@@ -1040,7 +1021,9 @@ return [
         'batch_campaign_sleep_time' => false,
         'cors_restrict_domains'     => true,
         'cors_valid_domains'        => [],
-        'rss_notification_url'      => 'https://mautic.com/?feed=rss2&tag=notification',
+        'rss_notification_url'      => '',
+        // 使用 rss 作为通告发布形式
+        // 'rss_notification_url'      => 'https://mautic.com/?feed=rss2&tag=notification',
         'max_entity_lock_time'      => 0,
     ],
 ];

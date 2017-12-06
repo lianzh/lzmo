@@ -19,7 +19,6 @@ use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EmojiHelper;
 use Mautic\CoreBundle\Helper\InputHelper;
 use Mautic\CoreBundle\Helper\PathsHelper;
-use Mautic\CoreBundle\Helper\UpdateHelper;
 use Mautic\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -28,11 +27,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
  */
 class NotificationModel extends FormModel
 {
-    /**
-     * @var bool
-     */
-    protected $disableUpdates;
-
+    
     /**
      * @var Session
      */
@@ -42,11 +37,6 @@ class NotificationModel extends FormModel
      * @var PathsHelper
      */
     protected $pathsHelper;
-
-    /**
-     * @var UpdateHelper
-     */
-    protected $updateHelper;
 
     /**
      * @var FeedReader
@@ -68,12 +58,10 @@ class NotificationModel extends FormModel
      */
     public function __construct(
         PathsHelper $pathsHelper,
-        UpdateHelper $updateHelper,
         FeedReader $rssReader,
         CoreParametersHelper $coreParametersHelper
     ) {
         $this->pathsHelper          = $pathsHelper;
-        $this->updateHelper         = $updateHelper;
         $this->rssReader            = $rssReader;
         $this->coreParametersHelper = $coreParametersHelper;
     }
@@ -87,14 +75,6 @@ class NotificationModel extends FormModel
     }
 
     /**
-     * @param $disableUpdates
-     */
-    public function setDisableUpdates($disableUpdates)
-    {
-        $this->disableUpdates = $disableUpdates;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @return \Mautic\CoreBundle\Entity\NotificationRepository
@@ -105,7 +85,7 @@ class NotificationModel extends FormModel
     }
 
     /**
-     * Write a notification.
+     * 发布一个通知
      *
      * @param string    $message   Message of the notification
      * @param string    $type      Optional $type to ID the source of the notification
@@ -181,6 +161,7 @@ class NotificationModel extends FormModel
             return [[], false, ''];
         }
 
+        // 检查 rss 公告数据
         $this->updateUpstreamNotifications();
 
         $showNewIndicator = false;
@@ -196,47 +177,9 @@ class NotificationModel extends FormModel
             }
         }
 
-        // Check for updates
-        $updateMessage = '';
-        $newUpdate     = false;
+        // 禁止掉程序更新操作
 
-        if (!$this->disableUpdates && $this->userHelper->getUser()->isAdmin()) {
-            $updateData = [];
-            $cacheFile  = $this->pathsHelper->getSystemPath('cache').'/lastUpdateCheck.txt';
-
-            //check to see when we last checked for an update
-            $lastChecked = $this->session->get('mautic.update.checked', 0);
-
-            if (time() - $lastChecked > 3600) {
-                $this->session->set('mautic.update.checked', time());
-
-                $updateData = $this->updateHelper->fetchData();
-            } elseif (file_exists($cacheFile)) {
-                $updateData = json_decode(file_get_contents($cacheFile), true);
-            }
-
-            // If the version key is set, we have an update
-            if (isset($updateData['version'])) {
-                $announcement = $this->translator->trans(
-                    'mautic.core.updater.update.announcement_link',
-                    ['%announcement%' => $updateData['announcement']]
-                );
-
-                $updateMessage = $this->translator->trans(
-                    $updateData['message'],
-                    ['%version%' => $updateData['version'], '%announcement%' => $announcement]
-                );
-
-                $alreadyNotified = $this->session->get('mautic.update.notified');
-
-                if (empty($alreadyNotified) || $alreadyNotified != $updateData['version']) {
-                    $newUpdate = true;
-                    $this->session->set('mautic.update.notified', $updateData['version']);
-                }
-            }
-        }
-
-        return [$notifications, $showNewIndicator, ['isNew' => $newUpdate, 'message' => $updateMessage]];
+        return [$notifications, $showNewIndicator, ['isNew' => false, 'message' => '']];
     }
 
     /**
