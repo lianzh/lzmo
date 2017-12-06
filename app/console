@@ -17,6 +17,8 @@ defined('IN_MAUTIC_CONSOLE') or define('IN_MAUTIC_CONSOLE', 1);
 define('MAUTIC_ROOT_DIR', realpath(__DIR__.'/..'));
 
 require_once __DIR__.'/autoload.php';
+require_once __DIR__.'/globalfunc.php';
+
 require_once __DIR__.'/AppKernel.php';
 
 use Mautic\CoreBundle\Console\Output\ConsoleDatetimeOutput;

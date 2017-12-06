@@ -184,4 +184,30 @@ abstract class QuickAccess
         ];
     }
 
+    /**
+     * 返回实体生成的表结构 sql
+     *
+     * @param $entityClass
+     *
+     * @return array
+     */
+    public static function buildORMEntitySchema($entityClass)
+    {
+        $em         = self::getDoctrine()->getManager();
+        /**@var EntityManager $em */
+
+        $metadata = new ORM\ClassMetadata($entityClass);
+        $entityClass::loadMetadata($metadata);
+
+        $schemaTool    = new SchemaTool($em);
+        $schemas = $schemaTool->getSchemaFromMetadata([$metadata]);
+
+        $dbPlatform = $em->getConnection()->getDatabasePlatform();
+
+        $sql = $dbPlatform->getName() === 'sqlite' ? [] : ['SET foreign_key_checks = 0;'];
+        $sql = array_merge($sql, $schemas->toSql($dbPlatform));
+
+        return $sql;
+    }
+
 }

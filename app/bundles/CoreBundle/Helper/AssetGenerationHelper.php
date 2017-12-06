@@ -76,6 +76,12 @@ class AssetGenerationHelper
             }
 
             if ($loadAll || $forceRegeneration) {
+
+                // 文件仅允许在终端模式下进行生成, 防止陷入死循环模式
+                if (php_sapi_name() !== 'cli') {
+                    die('assets:generate only run in cli');
+                }
+
                 if ($env == 'prod') {
                     ini_set('max_execution_time', 300);
 
