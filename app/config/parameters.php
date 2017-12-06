@@ -41,7 +41,10 @@ $extractLocales = function ($dir) use (&$locales) {
 
 $defaultLocalesDir = new \Symfony\Component\Finder\Finder();
 $defaultLocalesDir->directories()->in($root.'/bundles/CoreBundle/Translations')->ignoreDotFiles(true)->depth('== 0');
+
+// dump($defaultLocalesDir, 111);exit;
 foreach ($defaultLocalesDir as $dir) {
+    // app/bundles/CoreBundle/Translations
     $extractLocales($dir);
 }
 

@@ -2,6 +2,9 @@
 
 include __DIR__.'/paths_helper.php';
 
+// 指定可使用的国际化编码文件
+$container->setParameter('language_list_file', $paths['language_list_file']);
+
 $ormMappings        =
 $serializerMappings =
 $ipLookupServices   = [];

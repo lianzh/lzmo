@@ -16,6 +16,7 @@ $paths = [
     'plugins'      => 'plugins',
     'translations' => 'translations',
     'local_config' => '%kernel.root_dir%/config/local.php',
+    'language_list_file' => '%kernel.root_dir%/languageList.txt',
 ];
 
 //allow easy overrides of the above

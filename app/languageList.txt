@@ -1,0 +1,24 @@
+{
+    "languages": {
+        "en_US": {
+            "id": "100",
+            "name": "English - United States",
+            "code": "en_US"
+        },
+        "zh_Hans": {
+            "id": "19",
+            "name": "Chinese Simplified",
+            "code": "zh_Hans"
+        },
+        "zh_TW": {
+            "id": "29",
+            "name": "Chinese (Taiwan)",
+            "code": "zh_TW"
+        },
+        "zh_CN": {
+            "id": "33",
+            "name": "Chinese (China)",
+            "code": "zh_CN"
+        }
+    }
+}
