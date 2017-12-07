@@ -45,12 +45,12 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         $user->setFirstName('Admin');
         $user->setLastName('User');
         $user->setUsername('admin');
-        $user->setEmail('admin@yoursite.com');
+        $user->setEmail('admin@lianzh.com');
         $encoder = $this->container
             ->get('security.encoder_factory')
             ->getEncoder($user)
         ;
-        $user->setPassword($encoder->encodePassword('mautic', $user->getSalt()));
+        $user->setPassword($encoder->encodePassword('111111', $user->getSalt()));
         $user->setRole($this->getReference('admin-role'));
         $manager->persist($user);
         $manager->flush();
@@ -61,12 +61,12 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         $user->setFirstName('Sales');
         $user->setLastName('User');
         $user->setUsername('sales');
-        $user->setEmail('sales@yoursite.com');
+        $user->setEmail('sales@lianzh.com');
         $encoder = $this->container
             ->get('security.encoder_factory')
             ->getEncoder($user)
         ;
-        $user->setPassword($encoder->encodePassword('mautic', $user->getSalt()));
+        $user->setPassword($encoder->encodePassword('111111', $user->getSalt()));
         $user->setRole($this->getReference('sales-role'));
         $manager->persist($user);
         $manager->flush();
