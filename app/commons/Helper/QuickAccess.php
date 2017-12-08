@@ -212,4 +212,17 @@ abstract class QuickAccess
         return $sql;
     }
 
+    /**
+     * 清除系统缓存
+     * 
+     * @return void
+     */
+    public static function cleanAllCache()
+    {
+        // 清除的是 app/cache/{env} 目录
+
+        $cacheHelper = self::$container->get('mautic.helper.cache');
+        $cacheHelper->nukeCache();
+    }
+
 }
