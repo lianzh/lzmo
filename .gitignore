@@ -29,14 +29,14 @@
 /app/logs/*
 !/app/logs/.gitkeep
 
+/app/data/organizations/*
+!/app/data/organizations/.gitkeep
+
 /app/Resources/SensioGeneratorBundle
 /app/spool/*
 
 /vendor/*
 !/vendor/.htaccess
-
-/bin/*
-!/bin/.gitkeep
 
 /bundles
 /node_modules
