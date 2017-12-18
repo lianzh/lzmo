@@ -18,6 +18,7 @@ use Mautic\CoreBundle\Doctrine\Mapping\ClassMetadataBuilder;
 use Mautic\CoreBundle\Entity\FormEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Mautic\SupervisorBundle\Auth\Provider as SAP;
 
 /**
  * Class Role.
@@ -60,6 +61,11 @@ class Role extends FormEntity
     private $users;
 
     /**
+     * @var Organization
+     */
+    private $organization;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -76,7 +82,7 @@ class Role extends FormEntity
         $builder = new ClassMetadataBuilder($metadata);
 
         $builder->setTable('roles')
-            ->setCustomRepositoryClass('Mautic\UserBundle\Entity\RoleRepository');
+            ->setCustomRepositoryClass('\Mautic\UserBundle\Entity\RoleRepository');
 
         $builder->addIdColumns();
 
@@ -84,7 +90,7 @@ class Role extends FormEntity
             ->columnName('is_admin')
             ->build();
 
-        $builder->createOneToMany('permissions', 'Mautic\UserBundle\Entity\Permission')
+        $builder->createOneToMany('permissions', '\Mautic\UserBundle\Entity\Permission')
             ->orphanRemoval()
             ->mappedBy('role')
             ->cascadePersist()
@@ -96,9 +102,15 @@ class Role extends FormEntity
             ->columnName('readable_permissions')
             ->build();
 
-        $builder->createOneToMany('users', 'Mautic\UserBundle\Entity\User')
+        $builder->createOneToMany('users', '\Mautic\UserBundle\Entity\User')
             ->mappedBy('role')
             ->fetchExtraLazy()
+            ->build();
+
+        $builder->createManyToOne('organization', '\Mautic\UserBundle\Entity\Organization')
+            ->inversedBy('users')
+            ->cascadeMerge()
+            ->addJoinColumn('organization_id', 'id', false)
             ->build();
     }
 
@@ -264,6 +276,16 @@ class Role extends FormEntity
     }
 
     /**
+     * Determines if user is supervisor ORGANIZATION.
+     *
+     * @return bool
+     */
+    public function isSupervisor()
+    {
+        return SAP::ORGANIZATION_ID === $this->getId();
+    }
+
+    /**
      * Simply used to store a readable format of permissions for the changelog.
      *
      * @param array $permissions
@@ -285,15 +307,15 @@ class Role extends FormEntity
     }
 
     /**
-     * Add users.
+     * Add user.
      *
-     * @param User $users
+     * @param User $user
      *
      * @return Role
      */
-    public function addUser(User $users)
+    public function addUser(User $user)
     {
-        $this->users[] = $users;
+        $this->users[] = $user;
 
         return $this;
     }
@@ -303,9 +325,9 @@ class Role extends FormEntity
      *
      * @param User $users
      */
-    public function removeUser(User $users)
+    public function removeUser(User $user)
     {
-        $this->users->removeElement($users);
+        $this->users->removeElement($user);
     }
 
     /**
@@ -316,5 +338,29 @@ class Role extends FormEntity
     public function getUsers()
     {
         return $this->users;
+    }
+    
+    /**
+     * Set organization.
+     *
+     * @param Organization $organization
+     *
+     * @return User
+     */
+    public function setOrganization(Organization $organization = null)
+    {
+        $this->isChanged('organization', $organization);
+        $this->organization = $organization;
+        return $this;
+    }
+
+    /**
+     * Get organization.
+     *
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
     }
 }

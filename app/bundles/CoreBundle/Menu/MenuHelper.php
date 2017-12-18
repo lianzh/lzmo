@@ -15,6 +15,7 @@ use Mautic\CoreBundle\Security\Permissions\CorePermissions;
 use Mautic\PluginBundle\Helper\IntegrationHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Mautic\SupervisorBundle\Auth\Provider as SAP;
 
 /**
  * Class MenuHelper.
@@ -323,6 +324,13 @@ class MenuHelper
      */
     protected function handleAccessCheck($accessLevel)
     {
+        // 处理 超级管理员组专享的权限
+        $isSupervisor = SAP::isTrue($accessLevel, $permissions);
+        if ($isSupervisor) {
+            $withAdmin = SAP::withAdmin($permissions);
+            return $this->security->isSupervisor($withAdmin);
+        }
+
         switch ($accessLevel) {
             case 'admin':
                 return $this->security->isAdmin();

@@ -45,6 +45,7 @@ class LoadRoleData extends AbstractFixture implements OrderedFixtureInterface, C
         $role->setName('Administrators');
         $role->setDescription('Has access to everything.');
         $role->setIsAdmin(1);
+        $role->setOrganization($this->getReference('org-default'));
         $manager->persist($role);
         $manager->flush();
 
@@ -53,6 +54,7 @@ class LoadRoleData extends AbstractFixture implements OrderedFixtureInterface, C
         $role = new Role();
         $role->setName('Sales Team');
         $role->setDescription('Has access to sales');
+        $role->setOrganization($this->getReference('org-default'));
         $role->setIsAdmin(0);
 
         $permissions = [
@@ -65,6 +67,33 @@ class LoadRoleData extends AbstractFixture implements OrderedFixtureInterface, C
         $manager->flush();
 
         $this->addReference('sales-role', $role);
+
+        $role = new Role();
+        $role->setName('Administrators');
+        $role->setDescription('Has access to everything.');
+        $role->setIsAdmin(1);
+        $role->setOrganization($this->getReference('org-xiaomiyao'));
+        $manager->persist($role);
+        $manager->flush();
+
+        $this->addReference('admin-role@xiaomiyao', $role);
+
+        $role = new Role();
+        $role->setName('Sales Team');
+        $role->setDescription('Has access to sales');
+        $role->setOrganization($this->getReference('org-xiaomiyao'));
+        $role->setIsAdmin(0);
+
+        $permissions = [
+            'user:profile' => ['editname'],
+            'lead:leads'   => ['full'],
+        ];
+        $this->container->get('mautic.user.model.role')->setRolePermissions($role, $permissions);
+
+        $manager->persist($role);
+        $manager->flush();
+
+        $this->addReference('sales-role@xiaomiyao', $role);
     }
 
     /**
@@ -72,6 +101,6 @@ class LoadRoleData extends AbstractFixture implements OrderedFixtureInterface, C
      */
     public function getOrder()
     {
-        return 1;
+        return 2;
     }
 }

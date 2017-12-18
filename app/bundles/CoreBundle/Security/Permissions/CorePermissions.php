@@ -18,6 +18,7 @@ use Mautic\UserBundle\Entity\Permission;
 use Mautic\UserBundle\Entity\User;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\TranslatorInterface;
+use Mautic\SupervisorBundle\Auth\Provider as SupervisorAuthProvider;
 
 /**
  * Class Security.
@@ -209,11 +210,30 @@ class CorePermissions
     }
 
     /**
+     * 是否 组织管理员
+     * 
      * @return bool
      */
     public function isAdmin()
     {
         return $this->userHelper->getUser()->isAdmin();
+    }
+
+    /**
+     * 是否系统管理组成员
+     *
+     * @param bool   $withAdmin 是否是系统管理组中的管理员
+     * 
+     * @return bool
+     */
+    public function isSupervisor($withAdmin = false)
+    {
+        $isSupervisor = $this->userHelper->getUser()->isSupervisor();
+        if ($isSupervisor) {
+            return $withAdmin ? $this->userHelper->getUser()->getRole()->isAdmin() : true;
+        }
+
+        return false;
     }
 
     /**

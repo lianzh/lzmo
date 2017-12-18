@@ -9,6 +9,8 @@
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
+use Mautic\SupervisorBundle\Auth\Provider as SAP;
+
 return [
     'routes' => [
         'main' => [
@@ -30,13 +32,15 @@ return [
                 'routeParameters' => ['objectAction' => 'edit'],
                 'iconClass'       => 'fa-cogs',
                 'id'              => 'mautic_config_index',
-                'access'          => 'admin',
+                // 'access'          => 'admin',
+                'access'          => SAP::getRoleAccessor(SAP::ROLE_USER),
             ],
             'mautic.sysinfo.menu.index' => [
                 'route'     => 'mautic_sysinfo_index',
                 'iconClass' => 'fa-life-ring',
                 'id'        => 'mautic_sysinfo_index',
-                'access'    => 'admin',
+                // 'access'    => 'admin',
+                'access'    => SAP::getRoleAccessor(SAP::ROLE_ADMIN),
                 'checks'    => [
                     'parameters' => [
                         'sysinfo_disabled' => false,

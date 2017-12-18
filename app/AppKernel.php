@@ -160,6 +160,7 @@ class AppKernel extends Kernel
             new Mautic\StageBundle\MauticStageBundle(),
             new Mautic\UserBundle\MauticUserBundle(),
             new Mautic\WebhookBundle\MauticWebhookBundle(),
+            new Mautic\SupervisorBundle\MauticSupervisorBundle(),
             new LightSaml\SymfonyBridgeBundle\LightSamlSymfonyBridgeBundle(),
             new LightSaml\SpBundle\LightSamlSpBundle(),
             new Ivory\OrderedFormBundle\IvoryOrderedFormBundle(),

@@ -4,6 +4,7 @@ namespace Mautic\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Mautic\CoreBundle\Doctrine\Mapping\ClassMetadataBuilder;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Organization
@@ -31,6 +32,25 @@ class Organization
     private $dateAdded;
 
     /**
+     * @var ArrayCollection
+     */
+    private $roles;
+
+    /**
+     * @var ArrayCollection
+     */
+    private $users;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->roles    = new ArrayCollection();
+        $this->users    = new ArrayCollection();
+    }
+
+    /**
      * @param ORM\ClassMetadata $metadata
      */
     public static function loadMetadata(ORM\ClassMetadata $metadata)
@@ -38,7 +58,7 @@ class Organization
         $builder = new ClassMetadataBuilder($metadata);
 
         $builder->setTable('organizations')
-            ->setCustomRepositoryClass('Mautic\UserBundle\Entity\OrganizationRepository')
+            ->setCustomRepositoryClass('\Mautic\UserBundle\Entity\OrganizationRepository')
             ->addUniqueConstraint(['name'], 'unique_perm');
 
         $builder->addId();
@@ -55,6 +75,43 @@ class Organization
         $builder->createField('dateAdded', 'datetime')
             ->columnName('date_added')
             ->nullable()
+            ->build();
+
+        $builder->createOneToMany('roles', '\Mautic\UserBundle\Entity\Role')
+            ->mappedBy('organization')
+            ->fetchExtraLazy()
+            ->build();
+
+        $builder->createOneToMany('users', '\Mautic\UserBundle\Entity\User')
+            ->mappedBy('organization')
+            ->fetchExtraLazy()
+            ->build();
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     */
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('name', new Assert\NotBlank(
+            ['message' => 'mautic.core.name.required']
+        ));
+    }
+
+    /**
+     * Prepares the metadata for API usage.
+     *
+     * @param $metadata
+     */
+    public static function loadApiMetadata(ApiMetadataDriver $metadata)
+    {
+        $metadata->setGroupPrefix('organization')
+            ->addListProperties(
+                [
+                    'id',
+                    'name',
+                ]
+            )
             ->build();
     }
 
@@ -139,5 +196,73 @@ class Organization
     {
         return $this->dateAdded;
     }
-}
 
+    /**
+     * Add user.
+     *
+     * @param User $user
+     *
+     * @return Organization
+     */
+    public function addUser(User $user)
+    {
+        $this->users[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * Remove user.
+     *
+     * @param User $user
+     */
+    public function removeUser(User $user)
+    {
+        $this->users->removeElement($user);
+    }
+
+    /**
+     * Get users.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
+
+    /**
+     * Add role.
+     *
+     * @param Role $role
+     *
+     * @return Organization
+     */
+    public function addRole(Role $role)
+    {
+        $this->roles[] = $role;
+
+        return $this;
+    }
+
+    /**
+     * Remove role.
+     *
+     * @param Role $roles
+     */
+    public function removeRole(Role $role)
+    {
+        $this->roles->removeElement($role);
+    }
+
+    /**
+     * Get roles.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+}

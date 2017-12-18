@@ -83,6 +83,11 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
     private $role;
 
     /**
+     * @var Organization
+     */
+    private $organization;
+
+    /**
      * @var string
      */
     private $timezone = '';
@@ -140,15 +145,11 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
     }
 
     /**
-     * @deprecated 2.9.0 to be removed in 3.0; support for $isGuest public property
-     *
      * @param $name
      */
     public function __get($name)
     {
         if ('isGuest' === $name) {
-            @trigger_error('$isGuest is deprecated as of 2.9.0; use construct and isGuest() instead', E_USER_DEPRECATED);
-
             return $this->guest;
         }
     }
@@ -161,7 +162,7 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
         $builder = new ClassMetadataBuilder($metadata);
 
         $builder->setTable('users')
-            ->setCustomRepositoryClass('Mautic\UserBundle\Entity\UserRepository');
+            ->setCustomRepositoryClass('\Mautic\UserBundle\Entity\UserRepository');
 
         $builder->addId();
 
@@ -194,10 +195,16 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
             ->nullable()
             ->build();
 
-        $builder->createManyToOne('role', 'Mautic\UserBundle\Entity\Role')
+        $builder->createManyToOne('role', '\Mautic\UserBundle\Entity\Role')
             ->inversedBy('users')
             ->cascadeMerge()
             ->addJoinColumn('role_id', 'id', false)
+            ->build();
+
+        $builder->createManyToOne('organization', '\Mautic\UserBundle\Entity\Organization')
+            ->inversedBy('users')
+            ->cascadeMerge()
+            ->addJoinColumn('organization_id', 'id', false)
             ->build();
 
         $builder->createField('timezone', 'string')
@@ -280,6 +287,10 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
             ['message' => 'mautic.user.user.role.notblank']
         ));
 
+        $metadata->addPropertyConstraint('organization', new Assert\NotBlank(
+            ['message' => 'mautic.user.user.organization.notblank']
+        ));
+
         $metadata->addPropertyConstraint('plainPassword', new Assert\NotBlank(
             [
                 'message' => 'mautic.user.user.password.notblank',
@@ -337,6 +348,7 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
                     'email',
                     'position',
                     'role',
+                    'organization',
                     'timezone',
                     'locale',
                     'lastLogin',
@@ -682,6 +694,30 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
     }
 
     /**
+     * Set organization.
+     *
+     * @param Organization $organization
+     *
+     * @return User
+     */
+    public function setOrganization(Organization $organization = null)
+    {
+        $this->isChanged('organization', $organization);
+        $this->organization = $organization;
+        return $this;
+    }
+
+    /**
+     * Get organization.
+     *
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
      * Set active permissions.
      *
      * @param array $permissions
@@ -789,6 +825,20 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
     {
         if ($this->role !== null) {
             return $this->role->isAdmin();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Determines if user is supervisor ORGANIZATION.
+     *
+     * @return bool
+     */
+    public function isSupervisor()
+    {
+        if ($this->role !== null) {
+            return $this->role->isSupervisor();
         } else {
             return false;
         }

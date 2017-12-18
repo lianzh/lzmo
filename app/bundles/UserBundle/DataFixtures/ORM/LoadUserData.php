@@ -52,6 +52,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         ;
         $user->setPassword($encoder->encodePassword('111111', $user->getSalt()));
         $user->setRole($this->getReference('admin-role'));
+        $user->setOrganization($this->getReference('org-default'));
         $manager->persist($user);
         $manager->flush();
 
@@ -68,10 +69,45 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         ;
         $user->setPassword($encoder->encodePassword('111111', $user->getSalt()));
         $user->setRole($this->getReference('sales-role'));
+        $user->setOrganization($this->getReference('org-default'));
         $manager->persist($user);
         $manager->flush();
 
         $this->addReference('sales-user', $user);
+
+        $user = new User();
+        $user->setFirstName('Admin');
+        $user->setLastName('User');
+        $user->setUsername('xiaomiyao-admin');
+        $user->setEmail('admin@xiaomiyao.com');
+        $encoder = $this->container
+            ->get('security.encoder_factory')
+            ->getEncoder($user)
+        ;
+        $user->setPassword($encoder->encodePassword('111111', $user->getSalt()));
+        $user->setRole($this->getReference('admin-role@xiaomiyao'));
+        $user->setOrganization($this->getReference('org-xiaomiyao'));
+        $manager->persist($user);
+        $manager->flush();
+
+        $this->addReference('admin-user@xiaomiyao', $user);
+
+        $user = new User();
+        $user->setFirstName('Sales');
+        $user->setLastName('User');
+        $user->setUsername('xiaomiyao-sales');
+        $user->setEmail('sales@xiaomiyao.com');
+        $encoder = $this->container
+            ->get('security.encoder_factory')
+            ->getEncoder($user)
+        ;
+        $user->setPassword($encoder->encodePassword('111111', $user->getSalt()));
+        $user->setRole($this->getReference('admin-role@xiaomiyao'));
+        $user->setOrganization($this->getReference('org-xiaomiyao'));
+        $manager->persist($user);
+        $manager->flush();
+
+        $this->addReference('sales-user@xiaomiyao', $user);
     }
 
     /**
@@ -79,6 +115,6 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
      */
     public function getOrder()
     {
-        return 2;
+        return 3;
     }
 }

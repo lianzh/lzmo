@@ -14,7 +14,7 @@ namespace Mautic\WebhookBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Class MauticFormBundle.
+ * Class MauticWebhookBundle.
  */
 class MauticWebhookBundle extends Bundle
 {
