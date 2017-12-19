@@ -39,32 +39,6 @@ class Provider
 		return self::ACCESS_PREFIX . trim($vRole);
 	}
 
-
-	/**
-	 * 检查用户是否有访问权限
-	 * 
-	 * @param  User   $user
-	 * @param  int $minRole
-	 * 
-	 * @return bool
-	 */
-	public static function check(User $user, $minRole)
-	{		
-		// $orgId = $user->getOrganization()->getId();
-		// if ($orgId == self::ORGANIZATION_ID) {
-
-		// 	// 检查角色是否匹配
-		// 	$vRole = SupervisorRole::getRoleByUid($user->getId());
-
-		// 	// 防止 角色值小于管理员
-		// 	if ($vRole > self::ROLE_MAX) return false;
-
-		// 	return intval($vRole) >= $minRole;
-		// }
-
-		return false;
-	}
-
 	/**
 	 * 是否管理员才能访问
 	 * 

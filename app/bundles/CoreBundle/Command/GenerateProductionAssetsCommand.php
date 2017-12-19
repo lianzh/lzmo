@@ -70,6 +70,10 @@ EOT
         // Update successful
         $output->writeln('<info>'.$translator->trans('mautic.core.command.asset_generate_success').'</info>');
 
+        // 修正版本时间戳
+        touch(MAUTIC_ROOT_DIR . '/app/version.txt');
+        
+        $output->writeln('<info>'.filemtime(MAUTIC_ROOT_DIR . '/app/version.txt').'</info>');        
         return 0;
     }
 }

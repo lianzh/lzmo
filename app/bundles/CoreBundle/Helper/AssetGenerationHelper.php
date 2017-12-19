@@ -35,7 +35,11 @@ class AssetGenerationHelper
     public function __construct(MauticFactory $factory)
     {
         $this->factory = $factory;
-        $this->version = substr(hash('sha1', $this->factory->getParameter('secret_key').$this->factory->getVersion()), 0, 8);
+        // 增加时间戳
+        $this->version = @filemtime(MAUTIC_ROOT_DIR . '/app/version.txt');
+        if (!$this->version) {
+            $this->version = substr(hash('sha1', $this->factory->getParameter('secret_key').$this->factory->getVersion()), 0, 8);
+        }
     }
 
     /**

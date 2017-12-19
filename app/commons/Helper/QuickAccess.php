@@ -30,24 +30,6 @@ abstract class QuickAccess
     }
 
     /**
-     * 返回单例对象
-     *
-     * @return QuickAccess|null
-     */
-    public static function getInstance()
-    {
-        static $self = null;
-
-        if (empty(self::$container))
-        {
-            throw new \LogicException("Please init `container`!");
-        }
-
-        if (is_null($self)) $self = new self();
-        return $self;
-    }
-
-    /**
      * 返回容器对象
      *
      * @return ContainerInterface
@@ -60,7 +42,7 @@ abstract class QuickAccess
     /**
      * 返回登录的用户数据
      *
-     * @return Mautic\UserBundle\Entity\User
+     * @return \Mautic\UserBundle\Entity\User
      */
     public static function getCurrentLoginUser()
     {
