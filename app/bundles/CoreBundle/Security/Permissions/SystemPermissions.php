@@ -24,7 +24,6 @@ class SystemPermissions extends AbstractPermissions
     public function __construct($params)
     {
         parent::__construct($params);
-        $this->addStandardPermissions('themes');
     }
 
     /**
@@ -33,13 +32,5 @@ class SystemPermissions extends AbstractPermissions
     public function getName()
     {
         return 'core';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface &$builder, array $options, array $data)
-    {
-        $this->addStandardFormFields('core', 'themes', $builder, $data);
     }
 }

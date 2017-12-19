@@ -13,9 +13,9 @@
     <div class="col-md-5 pull-right">
         <?php echo $view['form']->start($form); ?>
             <div class="input-group">
-                <?php echo $view['form']->widget($form['file']); ?>
+                <?php echo isset($form['file']) ? $view['form']->widget($form['file']) : ''; ?>
                 <span class="input-group-btn">
-                    <?php echo $view['form']->widget($form['start']); ?>
+                    <?php echo isset($form['start']) ? $view['form']->widget($form['start']) : ''; ?>
                 </span>
             </div>
         <?php echo $view['form']->end($form); ?>

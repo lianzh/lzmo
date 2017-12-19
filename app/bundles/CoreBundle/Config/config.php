@@ -9,6 +9,8 @@
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
+use Mautic\SupervisorBundle\Auth\Provider as SAP;
+
 return [
     'routes' => [
         'main' => [
@@ -34,6 +36,9 @@ return [
             'mautic_themes_action' => [
                 'path'       => '/themes/{objectAction}/{objectId}',
                 'controller' => 'MauticCoreBundle:Theme:execute',
+                'requirements' => [
+                    'objectId' => '[a-zA-Z0-9_-]+',
+                ],
             ],
         ],
         'public' => [
@@ -122,7 +127,7 @@ return [
                 'route'     => 'mautic_themes_index',
                 'iconClass' => 'fa-newspaper-o',
                 'id'        => 'mautic_themes_index',
-                'access'    => 'core:themes:view',
+                'access'    => SAP::getRoleAccessor(SAP::ROLE_USER),
             ],
         ],
         'extra' => [

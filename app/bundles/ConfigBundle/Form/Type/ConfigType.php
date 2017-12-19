@@ -74,7 +74,7 @@ class ConfigType extends AbstractType
             }
         );
 
-        // Supervisor only allowed
+        // Supervisor admin only allowed
         if (QuickAccess::getContainer()->get('mautic.security')->isSupervisor(true)) {
             
             $builder->add(

@@ -11,6 +11,7 @@
 
 namespace Mautic\CoreBundle\Form\Type;
 
+use LianzhCommon\Helper\QuickAccess;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -25,26 +26,32 @@ class ThemeUploadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('file', 'file', [
-            'attr' => [
-                'accept'   => '.zip',
-                'class'    => 'form-control',
-                'required' => true,
-            ],
-        ]);
-        $constraints = [
-            new \Symfony\Component\Validator\Constraints\NotBlank(
-                ['message' => 'mautic.core.value.required']
-            ),
-        ];
-        $builder->add('start', 'submit', [
-            'attr' => [
-                'class'   => 'btn btn-primary',
-                'icon'    => 'fa fa-upload',
-                'onclick' => "mQuery(this).prop('disabled', true); mQuery('form[name=\'theme_upload\']').submit();",
-            ],
-            'label' => 'mautic.core.theme.install',
-        ]);
+
+        // Supervisor admin only allowed
+        if (QuickAccess::getContainer()->get('mautic.security')->isSupervisor(true)) {
+
+            $builder->add('file', 'file', [
+                'attr' => [
+                    'accept'   => '.zip',
+                    'class'    => 'form-control',
+                    'required' => true,
+                ],
+            ]);
+            // $constraints = [
+            //     new \Symfony\Component\Validator\Constraints\NotBlank(
+            //         ['message' => 'mautic.core.value.required']
+            //     ),
+            // ];
+            $builder->add('start', 'submit', [
+                'attr' => [
+                    'class'   => 'btn btn-primary',
+                    'icon'    => 'fa fa-upload',
+                    'onclick' => "mQuery(this).prop('disabled', true); mQuery('form[name=\'theme_upload\']').submit();",
+                ],
+                'label' => 'mautic.core.theme.install',
+            ]);
+
+        }
         if (!empty($options['action'])) {
             $builder->setAction($options['action']);
         }

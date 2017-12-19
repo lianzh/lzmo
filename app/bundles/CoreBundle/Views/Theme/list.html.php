@@ -25,7 +25,7 @@ $view->extend('MauticCoreBundle:Theme:index.html.php');
                         'langVar'         => 'core.theme',
                         'routeBase'       => 'themes',
                         'templateButtons' => [
-                            'delete' => $permissions['core:themes:delete'],
+                            'delete' => $permissions['delete'],
                         ],
                     ]
                 );
@@ -73,7 +73,7 @@ $view->extend('MauticCoreBundle:Theme:index.html.php');
                             'iconClass' => 'fa fa-image',
                         ];
                         $previewButton   = $hasThumbnail ? $previewButtonSettings : [];
-                        $deleteButton    = ['delete' => $permissions['core:themes:delete']];
+                        $deleteButton    = ['delete' => $permissions['delete']];
                         $templateButtons = !in_array($k, $defaultThemes) ? $deleteButton : [];
                         echo $view->render(
                             'MauticCoreBundle:Helper:list_actions.html.php',

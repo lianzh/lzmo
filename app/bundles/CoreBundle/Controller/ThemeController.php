@@ -26,17 +26,12 @@ class ThemeController extends FormController
      */
     public function indexAction()
     {
-        //set some permissions
-        $permissions = $this->get('mautic.security')->isGranted([
-            'core:themes:view',
-            'core:themes:create',
-            'core:themes:edit',
-            'core:themes:delete',
-        ], 'RETURN_ARRAY');
-
-        if (!$permissions['core:themes:view']) {
+        // Supervisor only allowed
+        if (!$this->get('mautic.security')->isSupervisor(false)) {
             return $this->accessDenied();
         }
+
+        $permissions['delete'] = $this->get('mautic.security')->isSupervisor(true);
 
         $themeHelper = $this->container->get('mautic.helper.theme');
         $dir         = $this->factory->getSystemPath('themes', true);
@@ -44,6 +39,11 @@ class ThemeController extends FormController
         $form        = $this->get('form.factory')->create('theme_upload', [], ['action' => $action]);
 
         if ($this->request->getMethod() == 'POST') {
+            // Supervisor admin only allowed
+            if (!$this->get('mautic.security')->isSupervisor(true)) {
+                return $this->accessDenied();
+            }
+
             if (isset($form) && !$cancelled = $this->isFormCancelled($form)) {
                 if ($this->isFormValid($form)) {
                     $fileData = $form['file']->getData();
@@ -118,13 +118,14 @@ class ThemeController extends FormController
      */
     public function downloadAction($themeName)
     {
+        // Supervisor only allowed
+        if (!$this->get('mautic.security')->isSupervisor(false)) {
+            return $this->accessDenied();
+        }
+
         $themeHelper = $this->container->get('mautic.helper.theme');
         $flashes     = [];
         $error       = false;
-
-        if (!$this->get('mautic.security')->isGranted('core:themes:edit')) {
-            return $this->accessDenied();
-        }
 
         if (!$themeHelper->exists($themeName)) {
             $flashes[] = [
@@ -133,18 +134,19 @@ class ThemeController extends FormController
                 'msgVars' => ['%theme%' => $themeName],
             ];
             $error = true;
+        } else {
+            try {
+                $zipPath = $themeHelper->zip($themeName);
+            } catch (\Exception $e) {
+                $flashes[] = [
+                    'type' => 'error',
+                    'msg'  => $e->getMessage(),
+                ];
+                $error = true;
+            }
         }
 
-        try {
-            $zipPath = $themeHelper->zip($themeName);
-        } catch (\Exception $e) {
-            $flashes[] = [
-                'type' => 'error',
-                'msg'  => $e->getMessage(),
-            ];
-            $error = true;
-        }
-
+        // 没有报错 但是也没有获取到 zip 文件
         if (!$error && !$zipPath) {
             $flashes[] = [
                 'type' => 'error',
@@ -185,6 +187,11 @@ class ThemeController extends FormController
      */
     public function deleteAction($themeName)
     {
+        // Supervisor admin only allowed
+        if (!$this->get('mautic.security')->isSupervisor(true)) {
+            return $this->accessDenied();
+        }
+
         $flashes = [];
 
         if ($this->request->getMethod() == 'POST') {
@@ -205,6 +212,11 @@ class ThemeController extends FormController
      */
     public function batchDeleteAction()
     {
+        // Supervisor admin only allowed
+        if (!$this->get('mautic.security')->isSupervisor(true)) {
+            return $this->accessDenied();
+        }
+
         $flashes = [];
 
         if ($this->request->getMethod() == 'POST') {
@@ -227,7 +239,7 @@ class ThemeController extends FormController
      *
      * @return array
      */
-    public function deleteTheme($themeName)
+    private function deleteTheme($themeName)
     {
         $flashes     = [];
         $themeHelper = $this->container->get('mautic.helper.theme');
@@ -276,7 +288,7 @@ class ThemeController extends FormController
      *
      * @return array
      */
-    public function getIndexPostActionVars()
+    private function getIndexPostActionVars()
     {
         return [
             'returnUrl'       => $this->generateUrl('mautic_themes_index'),
