@@ -282,7 +282,11 @@ class Role extends FormEntity
      */
     public function isSupervisor()
     {
-        return SAP::ORGANIZATION_ID === $this->getId();
+        if ($this->organization !== null) {
+            return SAP::ORGANIZATION_ID === $this->organization->getId();
+        }
+
+        return false;
     }
 
     /**

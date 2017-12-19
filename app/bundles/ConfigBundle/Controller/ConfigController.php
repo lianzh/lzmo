@@ -32,8 +32,8 @@ class ConfigController extends FormController
      */
     public function editAction()
     {
-        //admin only allowed
-        if (!$this->user->isAdmin()) {
+        // Supervisor only allowed
+        if (!$this->get('mautic.security')->isSupervisor(false)) {
             return $this->accessDenied();
         }
 
@@ -61,6 +61,12 @@ class ConfigController extends FormController
 
         // Check for a submitted form and process it
         if ($this->request->getMethod() == 'POST') {
+
+            // Supervisor admin only allowed
+            if (!$this->get('mautic.security')->isSupervisor(true)) {
+                return $this->accessDenied();
+            }
+
             if (!$cancelled = $this->isFormCancelled($form)) {
                 $isValid = false;
                 if ($isWritabale && $isValid = $this->isFormValid($form)) {
@@ -174,8 +180,8 @@ class ConfigController extends FormController
      */
     public function downloadAction($objectId)
     {
-        //admin only allowed
-        if (!$this->user->isAdmin()) {
+        // Supervisor only allowed
+        if (!$this->get('mautic.security')->isSupervisor(true)) {
             return $this->accessDenied();
         }
 
@@ -215,8 +221,8 @@ class ConfigController extends FormController
      */
     public function removeAction($objectId)
     {
-        //admin only allowed
-        if (!$this->user->isAdmin()) {
+        // Supervisor only allowed
+        if (!$this->get('mautic.security')->isSupervisor(true)) {
             return $this->accessDenied();
         }
 

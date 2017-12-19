@@ -8,6 +8,8 @@
  *
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
+use LianzhCommon\Helper\QuickAccess;
+
 $view->extend('MauticCoreBundle:Default:content.html.php');
 $view['slots']->set('mauticContent', 'integration');
 
@@ -20,19 +22,21 @@ if ($pluginFilter) {
 }
 $view['slots']->set('headerTitle', $header);
 
-$view['slots']->set('actions', $view->render('MauticCoreBundle:Helper:page_actions.html.php', [
-    'customButtons' => [
-        [
-            'attr' => [
-                'data-toggle' => 'ajax',
-                'href'        => $view['router']->path('mautic_plugin_reload'),
+if (QuickAccess::getContainer()->get('mautic.security')->isSupervisor(true)) {
+    $view['slots']->set('actions', $view->render('MauticCoreBundle:Helper:page_actions.html.php', [
+        'customButtons' => [
+            [
+                'attr' => [
+                    'data-toggle' => 'ajax',
+                    'href'        => $view['router']->path('mautic_plugin_reload'),
+                ],
+                'btnText'   => $view['translator']->trans('mautic.plugin.reload.plugins'),
+                'iconClass' => 'fa fa-cubes',
+                'tooltip'   => 'mautic.plugin.reload.plugins.tooltip',
             ],
-            'btnText'   => $view['translator']->trans('mautic.plugin.reload.plugins'),
-            'iconClass' => 'fa fa-cubes',
-            'tooltip'   => 'mautic.plugin.reload.plugins.tooltip',
         ],
-    ],
-]));
+    ]));
+}
 ?>
 
 <div class="panel panel-default bdr-t-wdh-0 mb-0">

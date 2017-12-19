@@ -32,14 +32,12 @@ return [
                 'routeParameters' => ['objectAction' => 'edit'],
                 'iconClass'       => 'fa-cogs',
                 'id'              => 'mautic_config_index',
-                // 'access'          => 'admin',
                 'access'          => SAP::getRoleAccessor(SAP::ROLE_USER),
             ],
             'mautic.sysinfo.menu.index' => [
                 'route'     => 'mautic_sysinfo_index',
                 'iconClass' => 'fa-life-ring',
                 'id'        => 'mautic_sysinfo_index',
-                // 'access'    => 'admin',
                 'access'    => SAP::getRoleAccessor(SAP::ROLE_ADMIN),
                 'checks'    => [
                     'parameters' => [

@@ -36,7 +36,8 @@ class PluginController extends FormController
      */
     public function indexAction()
     {
-        if (!$this->get('mautic.security')->isGranted('plugin:plugins:manage')) {
+        // Supervisor only allowed
+        if (!$this->get('mautic.security')->isSupervisor(false)) {
             return $this->accessDenied();
         }
 
@@ -145,7 +146,7 @@ class PluginController extends FormController
      */
     public function configAction($name, $activeTab = 'details-container', $page = 1)
     {
-        if (!$this->get('mautic.security')->isGranted('plugin:plugins:manage')) {
+        if (!$this->get('mautic.security')->isSupervisor(false)) {
             return $this->accessDenied();
         }
         if (!empty($this->request->get('activeTab'))) {
@@ -194,6 +195,11 @@ class PluginController extends FormController
         );
 
         if ($this->request->getMethod() == 'POST') {
+
+            if (!$this->get('mautic.security')->isSupervisor(true)) {
+                return $this->accessDenied();
+            }
+
             $valid = false;
             if (!$cancelled = $this->isFormCancelled($form)) {
                 $currentKeys            = $integrationObject->getDecryptedApiKeys($entity);
@@ -369,7 +375,7 @@ class PluginController extends FormController
      */
     public function infoAction($name)
     {
-        if (!$this->get('mautic.security')->isGranted('plugin:plugins:manage')) {
+        if (!$this->get('mautic.security')->isSupervisor(false)) {
             return $this->accessDenied();
         }
 
@@ -412,7 +418,7 @@ class PluginController extends FormController
      */
     public function reloadAction()
     {
-        if (!$this->get('mautic.security')->isGranted('plugin:plugins:manage')) {
+        if (!$this->get('mautic.security')->isSupervisor(true)) {
             return $this->accessDenied();
         }
 

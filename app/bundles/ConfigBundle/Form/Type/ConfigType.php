@@ -11,6 +11,7 @@
 
 namespace Mautic\ConfigBundle\Form\Type;
 
+use LianzhCommon\Helper\QuickAccess;
 use Mautic\ConfigBundle\Form\Helper\RestrictionHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -73,14 +74,18 @@ class ConfigType extends AbstractType
             }
         );
 
-        $builder->add(
-            'buttons',
-            'form_buttons',
-            [
-                'apply_onclick' => 'Mautic.activateBackdrop()',
-                'save_onclick'  => 'Mautic.activateBackdrop()',
-            ]
-        );
+        // Supervisor only allowed
+        if (QuickAccess::getContainer()->get('mautic.security')->isSupervisor(true)) {
+            
+            $builder->add(
+                'buttons',
+                'form_buttons',
+                [
+                    'apply_onclick' => 'Mautic.activateBackdrop()',
+                    'save_onclick'  => 'Mautic.activateBackdrop()',
+                ]
+            );
+        }
 
         if (!empty($options['action'])) {
             $builder->setAction($options['action']);

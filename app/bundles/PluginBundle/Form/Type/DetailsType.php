@@ -11,6 +11,7 @@
 
 namespace Mautic\PluginBundle\Form\Type;
 
+use LianzhCommon\Helper\QuickAccess;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -123,7 +124,10 @@ class DetailsType extends AbstractType
 
         $builder->add('in_auth', 'hidden', ['mapped' => false]);
 
-        $builder->add('buttons', 'form_buttons');
+        // Supervisor only allowed
+        if (QuickAccess::getContainer()->get('mautic.security')->isSupervisor(true)) {
+            $builder->add('buttons', 'form_buttons');
+        }
 
         if (!empty($options['action'])) {
             $builder->setAction($options['action']);

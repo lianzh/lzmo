@@ -15,7 +15,7 @@ class Provider
 	/**
 	 * 超级管理员组 组织id
 	 */
-	const ORGANIZATION_ID = 100;
+	const ORGANIZATION_ID = 1;
 
 	/**
 	 * 普通角色

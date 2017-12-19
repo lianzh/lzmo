@@ -71,9 +71,9 @@ EOT
         $output->writeln('<info>'.$translator->trans('mautic.core.command.asset_generate_success').'</info>');
 
         // 修正版本时间戳
-        touch(MAUTIC_ROOT_DIR . '/app/version.txt');
+        file_put_contents(MAUTIC_ROOT_DIR . '/app/version.txt', date('YmdHis'));
         
-        $output->writeln('<info>'.filemtime(MAUTIC_ROOT_DIR . '/app/version.txt').'</info>');        
+        $output->writeln('<info>'.file_get_contents(MAUTIC_ROOT_DIR . '/app/version.txt').'</info>');        
         return 0;
     }
 }
