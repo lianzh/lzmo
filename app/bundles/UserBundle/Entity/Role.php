@@ -108,7 +108,7 @@ class Role extends FormEntity
             ->build();
 
         $builder->createManyToOne('organization', '\Mautic\UserBundle\Entity\Organization')
-            ->inversedBy('users')
+            ->inversedBy('roles')
             ->cascadeMerge()
             ->addJoinColumn('organization_id', 'id', false)
             ->build();
