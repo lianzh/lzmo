@@ -43,16 +43,6 @@ class JsController extends CommonController
      */
     protected function getJsHeader()
     {
-        $year = date('Y');
-
-        return <<<JS
-/**
- * @package     MauticJS
- * @copyright   {$year} Mautic Contributors. All rights reserved.
- * @author      Mautic
- * @link        http://mautic.org
- * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- */
-JS;
+        return '';
     }
 }

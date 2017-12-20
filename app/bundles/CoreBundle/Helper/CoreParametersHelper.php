@@ -76,4 +76,12 @@ class CoreParametersHelper
     {
         return $this->parameterBag->has('mautic.'.$name);
     }
+
+    /**
+     * @return ParameterBagInterface
+     */
+    public function getParameterBag()
+    {
+        return $this->parameterBag;
+    }
 }
