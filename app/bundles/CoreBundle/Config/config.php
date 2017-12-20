@@ -687,8 +687,8 @@ return [
             'mautic.helper.cache_storage' => [
                 'class'     => 'Mautic\CoreBundle\Helper\CacheStorageHelper',
                 'arguments' => [
-                    '"db"',
-                    '%mautic.db_table_prefix%',
+                    '"fs"',
+                    '"data"',
                     'doctrine.dbal.default_connection',
                     '%kernel.cache_dir%',
                 ],
