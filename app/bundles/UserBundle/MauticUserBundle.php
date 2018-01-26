@@ -31,6 +31,6 @@ class MauticUserBundle extends Bundle
         $extension = $container->getExtension('security');
         $extension->addSecurityListenerFactory(new PluginFactory());
 
-        $container->addCompilerPass(new SamlPass());
+        // $container->addCompilerPass(new SamlPass());
     }
 }

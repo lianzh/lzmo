@@ -50,7 +50,7 @@ class EmailType extends AbstractType
     public function __construct(MauticFactory $factory)
     {
         $this->translator   = $factory->getTranslator();
-        $this->defaultTheme = $factory->getParameter('theme');
+        
         $this->em           = $factory->getEntityManager();
         $this->request      = $factory->getRequest();
 
@@ -63,6 +63,16 @@ class EmailType extends AbstractType
 
         foreach ($stages as $stage) {
             $this->stageChoices[$stage['value']] = $stage['label'];
+        }
+
+        // 设置默认样式
+        $allThemes     = (array) $factory->getInstalledThemes('email', false, true);
+        if (!empty($allThemes)) {
+            $this->defaultTheme = key($allThemes);
+        }
+
+        if (empty($this->defaultTheme)) {
+            $this->defaultTheme = $factory->getParameter('theme');
         }
     }
 
@@ -173,6 +183,11 @@ class EmailType extends AbstractType
             ]
         );
 
+        $template = $options['data']->getTemplate();
+        if (empty($template)) {
+            $template = $this->defaultTheme;
+        }
+
         $builder->add(
             'template',
             'theme_list',
@@ -182,7 +197,8 @@ class EmailType extends AbstractType
                     'class'   => 'form-control not-chosen hidden',
                     'tooltip' => 'mautic.email.form.template.help',
                 ],
-                'data' => $options['data']->getTemplate() ? $options['data']->getTemplate() : 'blank',
+                // 'data' => $options['data']->getTemplate() ? $options['data']->getTemplate() : 'blank',
+                'data' => $template,
             ]
         );
 

@@ -41,7 +41,7 @@ class EventPass implements CompilerPassInterface
             $definition->addMethodCall('setSecurity', [new Reference('mautic.security')]);
             $definition->addMethodCall('setSerializer', [new Reference('jms_serializer')]);
             
-            // 系统参数只应缓存系统核心部分
+            // 系统参数只应缓存系统核心部分(此处必须要,不然依赖配置的数据不能展示)
             $definition->addMethodCall('setSystemParameters', [new Parameter('mautic.parameters')]);
 
             $definition->addMethodCall('setDispatcher', [new Reference('event_dispatcher')]);

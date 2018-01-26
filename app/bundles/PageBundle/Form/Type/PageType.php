@@ -68,6 +68,12 @@ class PageType extends AbstractType
         $this->model        = $factory->getModel('page');
         $this->canViewOther = $factory->getSecurity()->isGranted('page:pages:viewother');
         $this->user         = $factory->getUser();
+
+        // 设置默认样式
+        $allThemes     = (array) $factory->getInstalledThemes('page', false, true);
+        if (!empty($allThemes)) {
+            $this->defaultTheme = key($allThemes);
+        }
     }
 
     /**
@@ -102,10 +108,13 @@ class PageType extends AbstractType
             ]
         );
 
+        // $options['data'] => pageEntity object
+
         $template = $options['data']->getTemplate();
         if (empty($template)) {
             $template = $this->defaultTheme;
         }
+
         $builder->add(
             'template',
             'theme_list',
@@ -117,7 +126,6 @@ class PageType extends AbstractType
                     'tooltip' => 'mautic.page.form.template.help',
                 ],
                 'empty_value' => 'mautic.core.none',
-                'data'        => $options['data']->getTemplate() ? $options['data']->getTemplate() : 'blank',
             ]
         );
 
