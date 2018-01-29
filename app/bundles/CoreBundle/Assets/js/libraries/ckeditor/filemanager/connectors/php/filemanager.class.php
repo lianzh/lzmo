@@ -128,6 +128,11 @@ class Filemanager
             $this->doc_root = $path; // i.e  '/var/www'
         }
 
+        // lz: auto create documentRoot
+        if (!is_dir($this->doc_root)) {
+            mkdir($this->doc_root, 0777, true);
+        }
+
         // necessary for retrieving path when set dynamically with $fm->setFileRoot() method
         $this->dynamic_fileroot = str_replace($documentRoot, '', $this->doc_root);
         $this->path_to_files    = $this->doc_root;

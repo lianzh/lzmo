@@ -42,10 +42,10 @@
     },
     "upload": {
             "multiple": true,
-            "number": 10,
+            "number": 5,
             "overwrite": false,
             "imagesOnly": false,
-            "fileSizeLimit": 16
+            "fileSizeLimit": 2
     },
     "exclude": {
         "unallowed_files": [

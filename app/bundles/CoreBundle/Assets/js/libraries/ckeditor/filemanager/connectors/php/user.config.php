@@ -23,13 +23,16 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+defined('MAUTIC_ROOT_DIR') or define('MAUTIC_ROOT_DIR', realpath(__DIR__.'/../../../../../../../../../..'));
+
 // Boot Symfony
 try {
     require_once __DIR__.'/../../../../../../../../../autoload.php';
     require_once __DIR__.'/../../../../../../../../../bootstrap.php.cache';
     require_once __DIR__.'/../../../../../../../../../AppKernel.php';
+    require_once MAUTIC_ROOT_DIR.'/app/globalfunc.php';
 
-    \Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('prod');
+    \Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('dev');
 
     $kernel = new AppKernel('prod', false);
     $kernel->boot();
@@ -47,9 +50,14 @@ try {
     $securityToken = $container->get('security.token_storage');
     $token         = $securityToken->getToken();
     $authenticated = ($token instanceof TokenInterface) ? count($token->getRoles()) : false;
+
+    //get current user organizationId
+    $organizationId = $token->getUser()->getOrganization()->getId();
+
 } catch (\Exception $exception) {
     error_log($exception);
     $authenticated = false;
+    $organizationId    = null;
 }
 
 /**
@@ -106,6 +114,11 @@ if ($authenticated) {
     } elseif (substr($userDir, 0, 1) == '/') {
         $userDir = substr($userDir, 1);
     }
+
+    // 获取 用户对应的品牌信息,为每个品牌创建不同的子目录
+    if (!$organizationId) $organizationId = '0';
+    $random = 1 . strlen($organizationId) . 3;
+    $userDir .= "orgfiles/{$organizationId}-{$random}/";
 
     $fm->setFileRoot($userDir, $docRoot);
 }

@@ -19,6 +19,8 @@ use Symfony\Component\ClassLoader\ApcClassLoader;
 $loader = require_once __DIR__.'/app/autoload.php';
 require __DIR__.'/app/globalfunc.php';
 
+// if (!empty($_COOKIE['_debugMode']) && 'wis' === $_COOKIE['_debugMode']) 
+
 /*
  * Use APC for autoloading to improve performance. Change 'sf2' to a unique prefix
  * in order to prevent cache key conflicts with other applications also using APC.
