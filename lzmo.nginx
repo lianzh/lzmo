@@ -1,0 +1,205 @@
+server {
+    listen 80;
+    listen [::]:80;     
+    server_name lzmo.pi;
+
+    access_log /var/log/nginx/lzmo_access.log;
+    error_log /var/log/nginx/lzmo_error.log;
+
+    client_max_body_size 100M;
+      
+    root /home/pi/deploys/lzmo;
+    index index.php index.html index.htm;
+
+    # for let's encrypt renewals!
+    location /.well-known {
+        default_type text/plain;
+    }
+
+    # redirect index.php to root
+    rewrite ^/index.php/(.*) /$1  permanent;
+
+    # redirect some entire folders
+    rewrite ^/(vendor|translations)/.* /index.php break;
+
+    # everything else goes through here!
+    location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to index.html
+        # the path is from perspective of PHP-FPM container
+        try_files $uri /index.php$is_args$args;
+    }
+
+    #
+    # Get static assets!!
+    #
+    location ~* .(eot|otf|ttf|woff|woff2)$ {
+        add_header Access-Control-Allow-Origin *;
+    }
+    
+    # Solve email tracking mautic
+    location ~ email/(.*).gif { try_files $uri /index.php?$args; }
+    # Solve JS Loading 404 Error
+    location ~ form/(.*).js {
+        try_files $uri /index.php?$args;
+        add_header Access-Control-Allow-Origin *;
+    }
+    location ~ emails/(.*).js {
+        try_files $uri /index.php?$args;
+        add_header Access-Control-Allow-Origin *;
+    }
+    # Solve Form processing 403 Error
+    location ~ /form/submit?(.*) {
+        try_files $uri /index.php?$args;
+        add_header Access-Control-Allow-Origin *;
+    }
+
+    # allow access to Assets folder in bundles
+
+    location ~ /app/bundles/CoreBundle/Assets/js/libraries/ckeditor/filemanager/connectors/php/filemanager.php {
+        allow all;
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 256 16k;
+        fastcgi_busy_buffers_size 256k;
+        fastcgi_temp_file_write_size 256k;
+    }
+
+    location ~ /app/bundles/.*/Assets/ {
+        allow all;
+    }
+
+    location ~* \.(?:xml|ogg|mp3|mp4|ogv|svg|svgz|eot|otf|woff|ttf|css|js|jpg|jpeg|gif|png|ico)$ {
+        try_files $uri =404;
+        expires max;
+        access_log off;
+        add_header Pragma public;
+        add_header Cache-Control "public,must-revalidate, proxy-revalidate";
+    }
+
+    #location ~* /(.*)\.(?:js|css|jpg|png|gif|ps|eot|otf|ttf|woff|woff2)$ {
+    #    # path to assets from nginx perspective
+    #    root /home/pi/deploys/lzmo;
+    #    allow all;
+    #}
+
+    # Deny everything else in /app folder except Assets folder in bundles
+    location ~ /app/ { deny all; }
+    #
+    # end static assets
+
+    # Deny everything else in /addons or /plugins folder except Assets folder in bundles
+    location ~ /(addons|plugins)/.*/Assets/ {
+        allow all;
+        access_log off;
+    }
+    location ~ /(addons|plugins)/ {
+        deny all;
+    }
+
+    # Deny all in bin
+    location ~ /(bin|node_modules|tests|build)/ {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    # Deny all php files in themes folder
+    location ~* ^/themes/(.*)\.php {
+        deny all;
+    }
+
+    # Don't log favicon
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    # Don't log robots
+    location = /robots.txt  {
+        access_log off;
+        log_not_found off;
+    }
+
+    # Deny yml, twig, markdown, init file access
+    location ~* /(.*)\.(?:markdown|md|twig|yaml|yml|ht|htaccess|ini)$ {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    # Deny all attempts to access hidden files/folders such as .htaccess, .htpasswd, .DS_Store (Mac), etc...
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    # Deny all grunt, composer files
+    location ~* (Gruntfile|package|composer)\.(js|json)$ {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    location ~ \.php$ {
+        # assumes your Mautic Docker container is called "mautic"
+        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_keep_conn on;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 256 16k;
+        fastcgi_busy_buffers_size 256k;
+        fastcgi_temp_file_write_size 256k;
+    }
+    
+    #add_header 'Access-Control-Allow-Origin' "*";
+}
+
+
+#### https
+#
+#
+#server {
+#    listen 443;
+#    server_name lzmo.pi;
+#
+#    ssl on;
+#    ssl_certificate /etc/letsencrypt/live/mautic.example.com/fullchain.pem; # managed by Certbot
+#    ssl_certificate_key /etc/letsencrypt/live/mautic.example.com/privkey.pem; # managed by Certbot
+#    access_log /var/log/nginx/mautic_access.log;
+#    error_log /var/log/nginx/mautic_error.log;
+#
+#    client_max_body_size 50m;
+#
+#    gzip on;
+#    gzip_proxied any;
+#    gzip_types       text/css text/plain text/xml application/xml application/javascript application/x-javascript text/javascript application/json text/x-json;
+#    gzip_vary        on;
+#    gzip_disable     "MSIE [1-6]\.";
+#
+#    root /home/pi/deploys/lzmo;
+#    index index.php index.html index.htm;
+#
+#    # redirect index.php to root
+#    #rewrite ^/index.php/(.*) /$1  permanent;
+#
+#    location / {
+#        try_files $uri $uri/ /index.php?$args;
+#    }
+#    location ~ \.php$ {
+#        try_files $uri =404;
+#       fastcgi_split_path_info ^(.+\.php)(/.+)$;
+#        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+#        fastcgi_index index.php;
+#        include fastcgi_params;
+#    }
+#}
