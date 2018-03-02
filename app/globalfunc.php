@@ -12,6 +12,11 @@ function classLoader()
 	return $loader;
 }
 
+function isDebugMode()
+{
+	return !empty($_COOKIE['_debugMode']) && 'wis' === $_COOKIE['_debugMode'];
+}
+
 // 加入 自定义类库定义
 classLoader()->addPsr4('LianzhCommon\\', __DIR__ . '/../app/commons');
 

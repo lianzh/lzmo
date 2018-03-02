@@ -14,24 +14,31 @@ define('MAUTIC_ROOT_DIR', __DIR__);
 date_default_timezone_set('UTC');
 
 use Mautic\Middleware\MiddlewareBuilder;
-use Symfony\Component\ClassLoader\ApcClassLoader;
 
 $loader = require_once __DIR__.'/app/autoload.php';
 require __DIR__.'/app/globalfunc.php';
 
-// if (!empty($_COOKIE['_debugMode']) && 'wis' === $_COOKIE['_debugMode']) 
+if (isDebugMode()) {
+	\Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('dev');
 
-/*
- * Use APC for autoloading to improve performance. Change 'sf2' to a unique prefix
- * in order to prevent cache key conflicts with other applications also using APC.
- */
-//$apcLoader = new ApcClassLoader('sf2', $loader);
-//$loader->unregister();
-//$apcLoader->register(true);
+	$kernel = new AppKernel('dev', true);
+	$kernel->loadClassCache();
 
-\Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('prod');
+	Stack\run((new MiddlewareBuilder('dev'))->resolve($kernel));
+}
+else {
+	/*
+	 * Use APC for autoloading to improve performance. Change 'sf2' to a unique prefix
+	 * in order to prevent cache key conflicts with other applications also using APC.
+	 */
+	//$apcLoader = new \Symfony\Component\ClassLoader\ApcClassLoader('sf2', $loader);
+	//$loader->unregister();
+	//$apcLoader->register(true);
 
-$kernel = new AppKernel('prod', false);
-$kernel->loadClassCache();
+	\Mautic\CoreBundle\ErrorHandler\ErrorHandler::register('prod');
 
-Stack\run((new MiddlewareBuilder('prod'))->resolve($kernel));
+	$kernel = new AppKernel('prod', false);
+	$kernel->loadClassCache();
+
+	Stack\run((new MiddlewareBuilder('prod'))->resolve($kernel));
+}
